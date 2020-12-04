@@ -9,7 +9,9 @@ repositories {
 kotlin {
   macosX64("native") {
     binaries {
-      executable()
+      executable {
+        entryPoint = "com.kdnakt.kttpd.main"
+      }
     }
   }
 }
