@@ -37,6 +37,9 @@ fun main() {
                     break
                 }
 
+                println("[DEBUG]:")
+                println("${buffer.toKString()}")
+
                 send(commFd, pinned.addressOf(0), length.convert(), 0)
                         .ensureUnixCallResult("write") { it >= 0 }
             }
