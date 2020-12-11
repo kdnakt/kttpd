@@ -15,4 +15,12 @@ class RequestParserTest {
         assertEquals(HttpMethod.GET, context.method, "should return GET method")
     }
 
+    @Test
+    fun shouldParseRequestTarget() {
+        val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
+                + "Host: localhost:8080" + crlf
+                + crlf).encodeToByteArray()
+        val context = parser.parse(reqByteArray)
+        assertEquals("/index.html", context.requestTarget, "should return /index.html")
+    }
 }
