@@ -6,7 +6,8 @@ data class RequestContext(
         val httpVersion: HttpVersion = HttpVersion.HTTP_1_1)
 
 enum class HttpMethod {
-    GET
+    GET,
+    POST,
 }
 
 enum class HttpVersion(val version: String) {
