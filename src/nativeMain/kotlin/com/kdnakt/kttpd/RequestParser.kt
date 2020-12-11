@@ -7,10 +7,12 @@ class RequestParser {
         val startLineElements = byteArray.toKString()
                 .split("\r\n")[0]
                 .split(" ")
+        val httpVersion = if (startLineElements.size <= 2)
+                "" else startLineElements[2]
         return RequestContext(
                 HttpMethod.valueOf(startLineElements[0]),
                 startLineElements[1],
-                HttpVersion.HTTP_1_1
+                HttpVersion.from(httpVersion)
         )
     }
 }
