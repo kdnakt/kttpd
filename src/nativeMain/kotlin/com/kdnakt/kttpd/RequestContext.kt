@@ -1,9 +1,9 @@
 package com.kdnakt.kttpd
 
 data class RequestContext(
-        val method: HttpMethod = HttpMethod.GET,
+        val method: HttpMethod,
         val requestTarget: String,
-        val httpVersion: HttpVersion = HttpVersion.HTTP_1_1)
+        val httpVersion: HttpVersion)
 
 enum class HttpMethod {
     GET,

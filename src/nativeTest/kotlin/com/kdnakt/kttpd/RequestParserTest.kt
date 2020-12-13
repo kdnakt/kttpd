@@ -1,7 +1,6 @@
 package com.kdnakt.kttpd
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 class RequestParserTest {
     private val parser: RequestParser = RequestParser()
@@ -38,7 +37,7 @@ class RequestParserTest {
         val reqByteArray = ("GET /index.html HTTP/1.0" + crlf
                 + crlf).encodeToByteArray()
         val context = parser.parse(reqByteArray)
-        assertEquals(HttpVersion.HTTP_1_0, context.httpVersion, "should return HTTP/1.1")
+        assertEquals(HttpVersion.HTTP_1_0, context.httpVersion, "should return HTTP/1.0")
     }
 
     @Test
@@ -46,6 +45,15 @@ class RequestParserTest {
         val reqByteArray = ("GET /index.html" + crlf
                 + crlf).encodeToByteArray()
         val context = parser.parse(reqByteArray)
-        assertEquals(HttpVersion.HTTP_0_9, context.httpVersion, "should return HTTP/1.1")
+        assertEquals(HttpVersion.HTTP_0_9, context.httpVersion, "should return HTTP/0.9")
+    }
+
+    @Test
+    fun shouldNotParseHttpResponse() {
+        val resByteArray = ("HTTP/1.1 200 OK" + crlf
+                + crlf).encodeToByteArray()
+        val actual = assertFailsWith<BadRequestException> { parser.parse(resByteArray) }
+        assertEquals(400, actual.status)
+        assertEquals("Bad Request", actual.reason)
     }
 }
