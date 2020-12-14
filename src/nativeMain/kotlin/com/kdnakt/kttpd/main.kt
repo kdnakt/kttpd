@@ -14,12 +14,12 @@ fun main() {
                 .ensureUnixCallResult("socket") { !it.isMinusOne() }
 
         with(serverAddr) {
-            memset(this.ptr, 0, sockaddr_in.size.convert())
+            memset(this.ptr, 0, sizeOf<sockaddr_in>().convert())
             sin_family = AF_INET.convert()
             sin_port = posix_htons(port).convert()
         }
 
-        bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.convert())
+        bind(listenFd, serverAddr.ptr.reinterpret(), sizeOf<sockaddr_in>().convert())
                 .ensureUnixCallResult("bind") { it == 0 }
 
         listen(listenFd, 10)
