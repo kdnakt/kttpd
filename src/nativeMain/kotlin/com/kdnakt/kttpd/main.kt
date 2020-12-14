@@ -28,6 +28,7 @@ fun main() {
         val commFd = accept(listenFd, null, null)
                 .ensureUnixCallResult("accept") { !it.isMinusOne() }
 
+        val parser = RequestParser()
         buffer.usePinned { pinned ->
             while (true) {
                 val length = recv(commFd, pinned.addressOf(0), buffer.size.convert(), 0).toInt()
@@ -40,8 +41,12 @@ fun main() {
                 println("[DEBUG]:")
                 println(pinned.get().toKString())
 
-                send(commFd, pinned.addressOf(0), length.convert(), 0)
-                        .ensureUnixCallResult("write") { it >= 0 }
+                val request = parser.parse(pinned.get())
+                println(request)
+
+                val contents = "HTTP/1.1 200 OK\r\nContent-Length: 33\r\n\r\n<html><h1>Hello World</h1></html>\r\n".cstr
+                send(commFd, contents, contents.size.toULong(), 0)
+                        .ensureUnixCallResult("write") { it >= 0}
             }
         }
     }
