@@ -44,8 +44,24 @@ fun main() {
                 val request = parser.parse(pinned.get())
                 println(request)
 
-                val contents = "HTTP/1.1 200 OK\r\nContent-Length: 33\r\n\r\n<html><h1>Hello World</h1></html>\r\n".cstr
-                send(commFd, contents, contents.size.toULong(), 0)
+                var content = ""
+                var res = OkResponse() as Response
+                try {
+                    content = FileReader("public" + request.requestTarget).content()
+                } catch (e: NotFoundException) {
+                    res = ErrorResponse(e)
+                }
+
+                val ret = when (request.httpVersion) {
+                    HttpVersion.HTTP_0_9 -> content
+                    HttpVersion.HTTP_1_0,
+                    HttpVersion.HTTP_1_1 ->
+                        "${request.httpVersion.version} ${res.status} ${res.reason}\r\n"
+                                .plus("Content-Length: ${content.length}\r\n")
+                                        .plus("\r\n").plus("${content}\r\n")
+                }
+
+                send(commFd, ret.cstr, ret.cstr.size.toULong(), 0)
                         .ensureUnixCallResult("write") { it >= 0}
             }
         }
