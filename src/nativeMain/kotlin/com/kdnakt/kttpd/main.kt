@@ -33,7 +33,7 @@ fun main() {
         var connectionId = 0
         acceptClientsAndRun(listenFd) {
             memScoped {
-                val bufferLength = 100uL
+                val bufferLength = 1024uL
                 val buffer = allocArray<ByteVar>(bufferLength.toLong())
                 val connectionIdString = "#${++connectionId}: "
 
