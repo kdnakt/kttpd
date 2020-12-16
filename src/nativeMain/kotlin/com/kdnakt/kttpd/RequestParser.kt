@@ -4,7 +4,11 @@ import kotlinx.cinterop.toKString
 
 class RequestParser {
     fun parse(byteArray: ByteArray): RequestContext {
-        val startLineElements = byteArray.toKString()
+        return parse(byteArray.toKString())
+    }
+
+    fun parse(reqString: String): RequestContext {
+        val startLineElements = reqString
                 .split("\r\n")[0]
                 .split(" ")
         val httpMethod = HttpMethod.values()
