@@ -5,7 +5,7 @@ import platform.posix.*
 import kotlin.coroutines.*
 
 fun main() {
-    println("Hello Kotlin/Native!")
+    println("kttpd start!")
     val port: Short = 8080
 
     memScoped {
