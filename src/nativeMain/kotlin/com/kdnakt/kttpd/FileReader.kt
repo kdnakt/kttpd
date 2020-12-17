@@ -5,9 +5,12 @@ import platform.posix.*
 
 class FileReader(private val path: String) {
     private var loaded = false
-    private var content: String = ""
+    private var content = ""
     fun content(): String {
         if (loaded) return content
+        if (path.contains("..")) {
+            throw NotFoundException()
+        }
         val file = fopen(path, "r")
         try {
             if (file == null) {

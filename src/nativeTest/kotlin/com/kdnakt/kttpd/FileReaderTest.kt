@@ -21,4 +21,16 @@ class FileReaderTest {
         assertEquals(404, actual.status)
         assertEquals("Not Found", actual.reason)
     }
+
+    @Test
+    fun testDirectoryTraversal() {
+        val reader = FileReader("publicTest/../public/index.html")
+        assertFailsWith<NotFoundException> { reader.content() }
+    }
+
+    @Test
+    fun testURIencodedDirectoryTraversal() {
+        val reader = FileReader("publicTest/%2e%2e%2fpublic/index.html")
+        assertFailsWith<NotFoundException> { reader.content() }
+    }
 }
