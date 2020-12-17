@@ -56,6 +56,7 @@ fun main() {
                             content = FileReader("public" + request.requestTarget).content()
                         } catch (e: NotFoundException) {
                             res = ErrorResponse(e)
+                            content = "${e.status} ${e.reason}"
                         }
 
                         val ret = when (request.httpVersion) {
