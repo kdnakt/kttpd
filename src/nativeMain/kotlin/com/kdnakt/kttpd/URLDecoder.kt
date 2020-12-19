@@ -6,8 +6,8 @@ private const val CHAR_COLON = 58
 private const val INDEX_ZERO = 48
 private const val INDEX_A    = 55
 
-private fun toIntByte(hex: String): Byte {
-    val cArr = hex.toUpperCase().toCharArray()
+fun String.toByteObj(): Byte {
+    val cArr = toUpperCase().toCharArray()
     var res = 0
     var p = 1
     for (i in cArr.size - 1 downTo 0) {
@@ -18,7 +18,6 @@ private fun toIntByte(hex: String): Byte {
     }
     return res.toByte()
 }
-
 
 fun decodeURL(url: String): String {
     val res = StringBuilder()
@@ -34,7 +33,7 @@ fun decodeURL(url: String): String {
                 var curr = c
                 while (i + 2 < url.length && '%' == curr) {
                     val hex = url.substring(i + 1, i + 3)
-                    bArr += toIntByte(hex)
+                    bArr += hex.toByteObj()
                     i += 3
                     if (i < url.length) {
                         curr = url[i]
