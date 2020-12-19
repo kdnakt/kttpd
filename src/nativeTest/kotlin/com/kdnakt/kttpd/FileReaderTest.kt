@@ -29,8 +29,25 @@ class FileReaderTest {
     }
 
     @Test
-    fun testURIencodedDirectoryTraversal() {
+    fun testURIEncodedDirectoryTraversal() {
         val reader = FileReader("publicTest/%2e%2e%2fpublic/index.html")
         assertFailsWith<NotFoundException> { reader.content() }
     }
+
+    @Test
+    fun testURIEncoded() {
+        // publicTest/メモ.txt
+        val reader = FileReader("publicTest/%E3%83%A1%E3%83%A2.txt")
+        assertEquals("""test memo1
+            |test memo2
+        """.trimMargin(), reader.content())
+    }
+
+    @Test
+    fun testURIEncodedContainsDirectoryTraversal() {
+        // publicReader/../public/Sample.txt
+        val reader = FileReader("publicTest/%2e%2E%2Fpublic/Sample.txt")
+        assertFailsWith<NotFoundException> { reader.content() }
+    }
+
 }

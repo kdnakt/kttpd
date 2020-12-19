@@ -3,7 +3,8 @@ package com.kdnakt.kttpd
 import kotlinx.cinterop.*
 import platform.posix.*
 
-class FileReader(private val path: String) {
+class FileReader(_path: String) {
+    val path = decodeURL(_path)
     private var loaded = false
     private var content = ""
     fun content(): String {
