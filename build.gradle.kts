@@ -4,10 +4,14 @@ plugins {
 
 repositories {
     mavenCentral()
+    // For kotlinx-cli
+    maven("https://kotlin.bintray.com/kotlinx")
 }
 
 kotlin {
     macosX64("native") {
+        // For kotlinx-cli
+        compilations["main"].enableEndorsedLibs = true
         binaries {
             executable {
                 entryPoint = "com.kdnakt.kttpd.main"

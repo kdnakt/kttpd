@@ -3,10 +3,16 @@ package com.kdnakt.kttpd
 import kotlinx.cinterop.*
 import platform.posix.*
 import kotlin.coroutines.*
+import kotlinx.cli.*
 
-fun main() {
+fun main(args: Array<String>) {
     println("kttpd start!")
-    val port: Short = 8080
+
+    val argsParser = ArgParser("kttpd")
+    val port by argsParser.option(ArgType.String, shortName="p").default("8080")
+    argsParser.parse(args)
+    val serverPort = port.toShortOrNull()
+            ?: throw Exception("Option port is expected to be short number. $port is provided.")
 
     memScoped {
         val serverAddr = alloc<sockaddr_in>()
@@ -17,7 +23,7 @@ fun main() {
             memset(this.ptr, 0, sizeOf<sockaddr_in>().convert())
             sin_family = AF_INET.convert()
             sin_addr.s_addr = posix_htons(0).convert()
-            sin_port = posix_htons(port).convert()
+            sin_port = posix_htons(serverPort).convert()
         }
 
         bind(listenFd, serverAddr.ptr.reinterpret(), sizeOf<sockaddr_in>().convert())
