@@ -4,8 +4,6 @@ plugins {
 
 repositories {
     mavenCentral()
-    // For kotlinx-cli
-    maven("https://kotlin.bintray.com/kotlinx")
 }
 
 kotlin {
