@@ -10,7 +10,7 @@ class FileReader(_path: String) {
     fun content(): String {
         if (loaded) return content
         if (path.contains("..")) {
-            throw NotFoundException()
+            throw ForbiddenException()
         }
         val file = fopen(path, "r")
         try {
@@ -37,3 +37,5 @@ class FileReader(_path: String) {
 }
 
 class NotFoundException(): HttpException(404, "Not Found")
+
+class ForbiddenException(): HttpException(403, "Forbidden")

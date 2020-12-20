@@ -25,13 +25,13 @@ class FileReaderTest {
     @Test
     fun testDirectoryTraversal() {
         val reader = FileReader("publicTest/../public/index.html")
-        assertFailsWith<NotFoundException> { reader.content() }
+        assertFailsWith<ForbiddenException> { reader.content() }
     }
 
     @Test
     fun testURIEncodedDirectoryTraversal() {
         val reader = FileReader("publicTest/%2e%2e%2fpublic/index.html")
-        assertFailsWith<NotFoundException> { reader.content() }
+        assertFailsWith<ForbiddenException> { reader.content() }
     }
 
     @Test
@@ -47,7 +47,7 @@ class FileReaderTest {
     fun testURIEncodedContainsDirectoryTraversal() {
         // publicReader/../public/Sample.txt
         val reader = FileReader("publicTest/%2e%2E%2Fpublic/Sample.txt")
-        assertFailsWith<NotFoundException> { reader.content() }
+        assertFailsWith<ForbiddenException> { reader.content() }
     }
 
 }
