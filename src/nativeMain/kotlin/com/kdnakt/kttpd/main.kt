@@ -38,38 +38,42 @@ fun main() {
                 val connectionIdString = "#${++connectionId}: "
 
                 try {
-                    while (true) {
+                    var requestString = ""
+                    // Read until empty line to get all the request headers
+                    while (!requestString.contains("\r\n\r\n")) {
                         val length = read(buffer, bufferLength)
 
                         if (length == 0uL)
                             break
 
-                        println("[DEBUG]: $connectionIdString")
-                        println(buffer.toKString())
-
-                        val request = parser.parse(buffer.toKString())
-                        println(request)
-
-                        var content: String
-                        var res = OkResponse() as Response
-                        try {
-                            content = FileReader("public" + request.requestTarget).content()
-                        } catch (e: NotFoundException) {
-                            res = ErrorResponse(e)
-                            content = "${e.status} ${e.reason}"
-                        }
-
-                        val ret = when (request.httpVersion) {
-                            HttpVersion.HTTP_0_9 -> content
-                            HttpVersion.HTTP_1_0,
-                            HttpVersion.HTTP_1_1 ->
-                                "${request.httpVersion.version} ${res.status} ${res.reason}\r\n"
-                                        .plus("Content-Length: ${content.length}\r\n")
-                                        .plus("\r\n").plus("${content}\r\n")
-                        }
-
-                        write(ret)
+                        requestString += buffer.toKString()
                     }
+
+                    println("[DEBUG $connectionIdString]: loaded request header")
+                    println(requestString)
+
+                    val request = parser.parse(requestString)
+                    println(request)
+
+                    var content: String
+                    var res = OkResponse() as Response
+                    try {
+                        content = FileReader("public" + request.requestTarget).content()
+                    } catch (e: NotFoundException) {
+                        res = ErrorResponse(e)
+                        content = "${e.status} ${e.reason}"
+                    }
+
+                    val ret = when (request.httpVersion) {
+                        HttpVersion.HTTP_0_9 -> content
+                        HttpVersion.HTTP_1_0,
+                        HttpVersion.HTTP_1_1 ->
+                            "${request.httpVersion.version} ${res.status} ${res.reason}\r\n"
+                                    .plus("Content-Length: ${content.length}\r\n")
+                                    .plus("\r\n").plus("${content}\r\n")
+                    }
+
+                    write(ret)
                 } catch (e: IOException) {
                     println("I/O error occurred: ${e.message}")
                 }
