@@ -71,7 +71,7 @@ fun main() {
                         write(ret)
                     }
                 } catch (e: IOException) {
-                    println("I/O error occured: ${e.message}")
+                    println("I/O error occurred: ${e.message}")
                 }
             }
         }
