@@ -3,7 +3,9 @@ package com.kdnakt.kttpd
 data class RequestContext(
         val method: HttpMethod,
         val requestTarget: String,
-        val httpVersion: HttpVersion)
+        val httpVersion: HttpVersion) {
+    val headers = mutableMapOf<String, String>()
+}
 
 enum class HttpMethod {
     GET,

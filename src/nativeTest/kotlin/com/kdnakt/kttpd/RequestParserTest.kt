@@ -33,6 +33,42 @@ class RequestParserTest {
     }
 
     @Test
+    fun shouldParseHeaderWithRightSize() {
+        val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
+                + "Host: localhost:8080" + crlf
+                + crlf).encodeToByteArray()
+        val context = parser.parse(reqByteArray)
+        assertEquals(1, context.headers.size)
+    }
+
+    @Test
+    fun shouldParseHeaderContent() {
+        val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
+                + "Host: localhost:8080" + crlf
+                + crlf).encodeToByteArray()
+        val context = parser.parse(reqByteArray)
+        assertEquals("localhost:8080", context.headers["Host"])
+    }
+
+    @Test
+    fun shouldParseHeaderContentWithoutOWS() {
+        val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
+                + "Host:localhost:8080" + crlf
+                + crlf).encodeToByteArray()
+        val context = parser.parse(reqByteArray)
+        assertEquals("localhost:8080", context.headers["Host"])
+    }
+
+    @Test
+    fun shouldParseHeaderContentWithOWSAfterFieldValue() {
+        val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
+                + "Host: localhost:8080\t" + crlf
+                + crlf).encodeToByteArray()
+        val context = parser.parse(reqByteArray)
+        assertEquals("localhost:8080", context.headers["Host"])
+    }
+
+    @Test
     fun shouldParseHttpVersion_1_0() {
         val reqByteArray = ("GET /index.html HTTP/1.0" + crlf
                 + crlf).encodeToByteArray()
