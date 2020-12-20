@@ -50,7 +50,7 @@ fun main() {
                         val request = parser.parse(buffer.toKString())
                         println(request)
 
-                        var content = ""
+                        var content: String
                         var res = OkResponse() as Response
                         try {
                             content = FileReader("public" + request.requestTarget).content()
