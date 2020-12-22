@@ -16,7 +16,6 @@ msg "started kttpd (PID: $PID)"
 . ./test/get_index_html.sh
 
 # clean up
-kill -9 $PID
-msg "stopped kttpd (PID: $PID)"
+cleanUp
 
 ok "TEST FINISHED"
