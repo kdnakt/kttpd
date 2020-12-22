@@ -6,12 +6,11 @@ import kotlin.coroutines.*
 import kotlinx.cli.*
 
 fun main(args: Array<String>) {
-    println("kttpd start!")
-
     val argsParser = ArgParser("kttpd")
     val port by argsParser.option(ArgType.Int, shortName="p").default(8080)
     argsParser.parse(args)
 
+    println("kttpd start!")
     memScoped {
         val serverAddr = alloc<sockaddr_in>()
         val listenFd = socket(AF_INET, SOCK_STREAM, 0)
