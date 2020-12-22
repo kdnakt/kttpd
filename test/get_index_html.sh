@@ -1,10 +1,12 @@
 #!/bin/bash
 
 msg "retrieve index.html"
-http --check-status --timeout=4.5 get $SERVER_PATH/index.html &>/dev/null
-if [ "$?" != "0" ]
-then
-  fail "get index.html failed"
+assert_status_code "get" "index.html" 200
+
+RES=$(http --check-status --ignore-stdin --timeout=4.5 get $SERVER_PATH/index.html)
+diff -w <(echo $RES) <(cat ./public/index.html | tr -s '\n' ' ')
+if [ "$?" != "0" ] ; then
+  fail "wrong index.html"
 else
-  ok "get index.html success"
+  ok "right index.html"
 fi

@@ -1,7 +1,15 @@
 #!/bin/bash
 
+
+function cleanUp () {
+  kill -9 $PID
+  msg "stopped kttpd (PID: $PID)"
+}
+
 function fail () {
   echo  -e " \033[;31m ~ [FAIL] $1 \033[0m "
+  cleanUp
+  echo  -e " \033[;31m ~ [FAIL] TEST FINISHED \033[0m "
   exit 1
 }
 
