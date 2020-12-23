@@ -10,7 +10,7 @@ fun main(args: Array<String>) {
     val port by argsParser.option(ArgType.Int, shortName="p").default(8080)
     argsParser.parse(args)
 
-    println("kttpd start!")
+    println("kttpd start: localhost:$port")
     memScoped {
         val serverAddr = alloc<sockaddr_in>()
         val listenFd = socket(AF_INET, SOCK_STREAM, 0)
