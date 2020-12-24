@@ -1,5 +1,7 @@
 package com.kdnakt.kttpd
 
+import com.kdnakt.kttpd.handler.GetHandler
+import com.kdnakt.kttpd.handler.PostHandler
 import kotlinx.cinterop.*
 import platform.posix.*
 import kotlin.coroutines.*
@@ -57,25 +59,24 @@ fun main(args: Array<String>) {
                     val request = parser.parse(requestString)
                     println(request)
 
-                    var content: String
-                    var res = OkResponse() as Response
-                    try {
-                        content = FileReader("public" + request.requestTarget).content()
-                    } catch (e: NotFoundException) {
-                        res = ErrorResponse(e)
-                        content = "${e.status} ${e.reason}"
+                    val handler = when(request.method) {
+                        HttpMethod.GET -> GetHandler()
+                        HttpMethod.POST -> {
+                            val contentType = request.headers["Content-Type"]
+                                    ?: throw BadRequestException()
+                            val contentLength = request.headers["Content-Length"]
+                                    ?.toInt()?: throw BadRequestException()
+
+                            val body = requestString.let {
+                                val bodyStart = it.indexOf("\r\n\r\n") + 4
+                                it.substring(bodyStart, bodyStart + contentLength)
+                            }
+                            println("[DEBUG $connectionIdString] body $body")
+                            PostHandler(contentType, body)
+                        }
                     }
 
-                    val ret = when (request.httpVersion) {
-                        HttpVersion.HTTP_0_9 -> content
-                        HttpVersion.HTTP_1_0,
-                        HttpVersion.HTTP_1_1 ->
-                            "${request.httpVersion.version} ${res.status} ${res.reason}\r\n"
-                                    .plus("Content-Length: ${content.length}\r\n")
-                                    .plus("\r\n").plus("${content}\r\n")
-                    }
-
-                    write(ret)
+                    write(handler.handle(request))
                 } catch (e: IOException) {
                     println("I/O error occurred: ${e.message}")
                 }
