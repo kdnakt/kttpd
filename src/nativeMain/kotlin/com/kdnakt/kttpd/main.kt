@@ -52,8 +52,7 @@ fun main(args: Array<String>) {
                         requestString += buffer.toKString()
                     }
 
-                    println("[DEBUG $connectionIdString]: loaded request header")
-                    println(requestString)
+                    println("[DEBUG $connectionIdString]: loaded request header\r\n$requestString")
 
                     val request = parser.parse(requestString)
                     println(request)
