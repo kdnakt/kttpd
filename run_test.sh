@@ -15,8 +15,10 @@ export SERVER_PATH=localhost:$SERVER_PORT
 PID=$( ./build/bin/native/releaseExecutable/kttpd.kexe --port $SERVER_PORT >/dev/null & echo $! )
 msg "started kttpd (PID: $PID)"
 
-# execute
-. ./test/get_index_html.sh
+# execute all the tests
+for f in ./test/*.sh; do
+    . "$f"
+done
 
 # clean up
 cleanUp
