@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# update binary
+gradle clean nativeBinaries
+
 # initialise script
 . ./test/init/functions.sh
 . ./test/init/precheck.sh
