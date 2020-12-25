@@ -6,6 +6,7 @@ import kotlinx.cinterop.*
 import platform.posix.*
 import kotlin.coroutines.*
 import kotlinx.cli.*
+import kotlinx.datetime.*
 
 fun main(args: Array<String>) {
     val argsParser = ArgParser("kttpd")
@@ -54,7 +55,7 @@ fun main(args: Array<String>) {
                         requestString += buffer.toKString()
                     }
 
-                    println("[DEBUG $connectionIdString]: loaded request header\r\n$requestString")
+                    println("[DEBUG $connectionIdString]: loaded request header ${Clock.System.now().toLocalDateTime(TimeZone.of("Asia/Tokyo"))} \r\n$requestString")
 
                     val request = parser.parse(requestString)
                     println(request)

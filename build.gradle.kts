@@ -4,6 +4,8 @@ plugins {
 
 repositories {
     mavenCentral()
+    // For kotlinx-datetime
+    maven("https://kotlin.bintray.com/kotlinx/")
 }
 
 kotlin {
@@ -13,6 +15,14 @@ kotlin {
         binaries {
             executable {
                 entryPoint = "com.kdnakt.kttpd.main"
+            }
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.1.1")
             }
         }
     }
