@@ -6,14 +6,17 @@ import kotlinx.cinterop.*
 import platform.posix.*
 import kotlin.coroutines.*
 import kotlinx.cli.*
-import kotlinx.datetime.*
 
 fun main(args: Array<String>) {
     val argsParser = ArgParser("kttpd")
     val port by argsParser.option(ArgType.Int, shortName="p").default(8080)
+    val logLevel by argsParser.option(ArgType.Choice(
+            listOf("error", "info", "debug")
+    ), shortName = "l").default("info")
     argsParser.parse(args)
 
-    println("kttpd start: localhost:$port")
+    val log = Logger("access_log", LogLevel.valueOf(logLevel.toUpperCase()))
+    log.info("kttpd start: localhost:$port")
     memScoped {
         val serverAddr = alloc<sockaddr_in>()
         val listenFd = socket(AF_INET, SOCK_STREAM, 0)
@@ -41,7 +44,7 @@ fun main(args: Array<String>) {
             memScoped {
                 val bufferLength = 1024uL
                 val buffer = allocArray<ByteVar>(bufferLength.toLong())
-                val connectionIdString = "#${++connectionId}: "
+                val connectionIdString = "${++connectionId}"
 
                 try {
                     var requestString = ""
@@ -55,10 +58,10 @@ fun main(args: Array<String>) {
                         requestString += buffer.toKString()
                     }
 
-                    println("[DEBUG $connectionIdString]: loaded request header ${Clock.System.now().toLocalDateTime(TimeZone.of("Asia/Tokyo"))} \r\n$requestString")
+                    log.debug("[$connectionIdString] loaded request header\n$requestString")
 
                     val request = parser.parse(requestString)
-                    println(request)
+                    log.info(request.toString())
 
                     val handler = when(request.method) {
                         HttpMethod.GET -> GetHandler()
@@ -72,14 +75,14 @@ fun main(args: Array<String>) {
                                 val bodyStart = it.indexOf("\r\n\r\n") + 4
                                 it.substring(bodyStart, bodyStart + contentLength)
                             }
-                            println("[DEBUG $connectionIdString] body $body")
+                            log.debug("[$connectionIdString] body $body")
                             PostHandler(contentType, body)
                         }
                     }
 
                     write(handler.handle(request))
                 } catch (e: IOException) {
-                    println("I/O error occurred: ${e.message}")
+                    log.error("I/O error occurred: ${e.message}")
                 }
             }
         }
