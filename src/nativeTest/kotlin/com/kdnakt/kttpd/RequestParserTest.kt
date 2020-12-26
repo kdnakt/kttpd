@@ -3,14 +3,13 @@ package com.kdnakt.kttpd
 import kotlin.test.*
 
 class RequestParserTest {
-    private val parser: RequestParser = RequestParser()
     private val crlf = "\r\n"
     @Test
     fun shouldParseGetMethod() {
         val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
                 + "Host: localhost:8080" + crlf
                 + crlf).encodeToByteArray()
-        val context = parser.parse(reqByteArray)
+        val context = parse(reqByteArray)
         assertEquals(HttpMethod.GET, context.method, "should return GET method")
     }
 
@@ -19,7 +18,7 @@ class RequestParserTest {
         val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
                 + "Host: localhost:8080" + crlf
                 + crlf).encodeToByteArray()
-        val context = parser.parse(reqByteArray)
+        val context = parse(reqByteArray)
         assertEquals("/index.html", context.requestTarget, "should return /index.html")
     }
 
@@ -28,7 +27,7 @@ class RequestParserTest {
         val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
                 + "Host: localhost:8080" + crlf
                 + crlf).encodeToByteArray()
-        val context = parser.parse(reqByteArray)
+        val context = parse(reqByteArray)
         assertEquals(HttpVersion.HTTP_1_1, context.httpVersion, "should return HTTP/1.1")
     }
 
@@ -37,7 +36,7 @@ class RequestParserTest {
         val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
                 + "Host: localhost:8080" + crlf
                 + crlf).encodeToByteArray()
-        val context = parser.parse(reqByteArray)
+        val context = parse(reqByteArray)
         assertEquals(1, context.headers.size)
     }
 
@@ -46,7 +45,7 @@ class RequestParserTest {
         val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
                 + "Host: localhost:8080" + crlf
                 + crlf).encodeToByteArray()
-        val context = parser.parse(reqByteArray)
+        val context = parse(reqByteArray)
         assertEquals("localhost:8080", context.headers["Host"])
     }
 
@@ -55,7 +54,7 @@ class RequestParserTest {
         val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
                 + "Host:localhost:8080" + crlf
                 + crlf).encodeToByteArray()
-        val context = parser.parse(reqByteArray)
+        val context = parse(reqByteArray)
         assertEquals("localhost:8080", context.headers["Host"])
     }
 
@@ -64,7 +63,7 @@ class RequestParserTest {
         val reqByteArray = ("GET /index.html HTTP/1.1" + crlf
                 + "Host: localhost:8080\t" + crlf
                 + crlf).encodeToByteArray()
-        val context = parser.parse(reqByteArray)
+        val context = parse(reqByteArray)
         assertEquals("localhost:8080", context.headers["Host"])
     }
 
@@ -72,7 +71,7 @@ class RequestParserTest {
     fun shouldParseHttpVersion_1_0() {
         val reqByteArray = ("GET /index.html HTTP/1.0" + crlf
                 + crlf).encodeToByteArray()
-        val context = parser.parse(reqByteArray)
+        val context = parse(reqByteArray)
         assertEquals(HttpVersion.HTTP_1_0, context.httpVersion, "should return HTTP/1.0")
     }
 
@@ -80,7 +79,7 @@ class RequestParserTest {
     fun shouldParseHttpVersion_0_9() {
         val reqByteArray = ("GET /index.html" + crlf
                 + crlf).encodeToByteArray()
-        val context = parser.parse(reqByteArray)
+        val context = parse(reqByteArray)
         assertEquals(HttpVersion.HTTP_0_9, context.httpVersion, "should return HTTP/0.9")
     }
 
@@ -88,7 +87,7 @@ class RequestParserTest {
     fun shouldNotParseHttpResponse() {
         val resByteArray = ("HTTP/1.1 200 OK" + crlf
                 + crlf).encodeToByteArray()
-        val actual = assertFailsWith<BadRequestException> { parser.parse(resByteArray) }
+        val actual = assertFailsWith<BadRequestException> { parse(resByteArray) }
         assertEquals(400, actual.status)
         assertEquals("Bad Request", actual.reason)
     }

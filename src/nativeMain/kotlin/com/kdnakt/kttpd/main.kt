@@ -38,7 +38,6 @@ fun main(args: Array<String>) {
         listen(listenFd, 10)
                 .ensureUnixCallResult("listen") { it == 0 }
 
-        val parser = RequestParser()
         var connectionId = 0
         acceptClientsAndRun(listenFd) {
             memScoped {
@@ -60,7 +59,7 @@ fun main(args: Array<String>) {
 
                     log.debug("[$connectionIdString] loaded request header\n$requestString")
 
-                    val request = parser.parse(requestString)
+                    val request = parse(requestString)
                     log.info(request.toString())
 
                     val handler = when(request.method) {
