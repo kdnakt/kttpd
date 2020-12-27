@@ -7,10 +7,10 @@ import platform.posix.fopen
 import platform.posix.fputs
 import kotlinx.datetime.*
 
-enum class LogLevel(level: Int, val logPrefix: String) {
-    ERROR(500, "[ERROR]"),
-    INFO(300, "[INFO ]"),
-    DEBUG(200, "[DEBUG]");
+enum class LogLevel(val logPrefix: String) {
+    ERROR("[ERROR]"),
+    INFO("[INFO ]"),
+    DEBUG("[DEBUG]"),
 }
 
 class Logger(val path: String,

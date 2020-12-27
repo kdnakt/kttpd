@@ -7,6 +7,7 @@ import platform.posix.*
 import kotlin.coroutines.*
 import kotlinx.cli.*
 
+@ExperimentalUnsignedTypes
 fun main(args: Array<String>) {
     val argsParser = ArgParser("kttpd")
     val port by argsParser.option(ArgType.Int, shortName="p").default(8080)
@@ -92,6 +93,7 @@ fun main(args: Array<String>) {
 sealed class WaitingFor {
     class Accept : WaitingFor()
 
+    @ExperimentalUnsignedTypes
     class Read(val data: CArrayPointer<ByteVar>,
                val length: ULong,
                val continuation: Continuation<ULong>) : WaitingFor()
@@ -100,6 +102,7 @@ sealed class WaitingFor {
                 val continuation: Continuation<Unit>) : WaitingFor()
 }
 
+@ExperimentalUnsignedTypes
 class Client(val clientFd: Int, val waitingList: MutableMap<Int, WaitingFor>) {
     suspend fun read(data: CArrayPointer<ByteVar>, dataLength: ULong): ULong {
         val length = read(clientFd, data, dataLength)
@@ -126,6 +129,7 @@ class Client(val clientFd: Int, val waitingList: MutableMap<Int, WaitingFor>) {
     }
 }
 
+@ExperimentalUnsignedTypes
 fun acceptClientsAndRun(serverFd: Int, block: suspend Client.() -> Unit) {
     memScoped {
         val waitingList = mutableMapOf<Int, WaitingFor>(serverFd to WaitingFor.Accept())
@@ -216,20 +220,4 @@ inline fun Int.ensureUnixCallResult(op: String, predicate: (Int) -> Boolean): In
     return this
 }
 
-inline fun Long.ensureUnixCallResult(op: String, predicate: (Long) -> Boolean): Long {
-    if (!predicate(this)) {
-        throw Error("$op: ${strerror(posix_errno())!!.toKString()}")
-    }
-    return this
-}
-
-inline fun ULong.ensureUnixCallResult(op: String, predicate: (ULong) -> Boolean): ULong {
-    if (!predicate(this)) {
-        throw Error("$op: ${strerror(posix_errno())!!.toKString()}")
-    }
-    return this
-}
-
 private fun Int.isMinusOne() = (this == -1)
-private fun Long.isMinusOne() = (this == -1L)
-private fun ULong.isMinusOne() = (this == ULong.MAX_VALUE)
