@@ -28,6 +28,14 @@ kotlin {
     }
 }
 
+task("e2etest") {
+    doLast {
+        exec {
+            commandLine("/bin/bash", "./run_test.sh")
+        }
+    }
+}
+
 tasks.withType<Wrapper> {
     gradleVersion = "6.7.1"
     distributionType = Wrapper.DistributionType.BIN
