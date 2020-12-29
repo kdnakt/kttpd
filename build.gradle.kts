@@ -37,6 +37,7 @@ task("e2etest") {
 }
 
 tasks["build"].finalizedBy("e2etest")
+tasks["nativeTestBinaries"].finalizedBy("e2etest")
 
 tasks.withType<Wrapper> {
     gradleVersion = "6.7.1"
