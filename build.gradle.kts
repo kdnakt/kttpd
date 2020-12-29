@@ -28,12 +28,25 @@ kotlin {
     }
 }
 
-task("e2etest") {
+task("e2e_default_port") {
+    doLast {
+        exec {
+            executable("./run_test_default_port.sh")
+        }
+    }
+}
+
+task("e2e_all") {
     doLast {
         exec {
             executable("./run_test.sh")
         }
     }
+}
+
+task("e2etest") {
+    dependsOn("e2e_default_port",
+            "e2e_all")
 }
 
 tasks["build"].finalizedBy("e2etest")
