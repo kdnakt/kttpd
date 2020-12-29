@@ -31,7 +31,7 @@ kotlin {
 task("e2etest") {
     doLast {
         exec {
-            commandLine("/bin/bash", "./run_test.sh")
+            executable("./run_test.sh")
         }
     }
 }
