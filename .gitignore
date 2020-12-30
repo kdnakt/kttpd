@@ -1,4 +1,4 @@
-access_log
+**/access_log
 
 # Compiled class file
 *.class

@@ -11,7 +11,19 @@ enum class LogLevel(val logPrefix: String) {
 }
 
 class Logger(val path: String,
-             val level: LogLevel = LogLevel.INFO)
+             val level: LogLevel = LogLevel.INFO) {
+    init {
+        val dirPath = path.substring(0, path.lastIndexOf("/"))
+        opendir(dirPath)
+        if (ENOENT == errno) {// dir doesn't exist
+            val permission = S_IRUSR.or(S_IWUSR).or(S_IXUSR) /* rwx */
+                    .or(S_IRGRP).or(S_IWGRP).or(S_IXGRP)     /* rwx */
+                    .or(S_IROTH).or(S_IWOTH).or(S_IXOTH)     /* rwx */
+            if (mkdir(dirPath, permission.toUShort()) != 0)
+                throw Error("cannot create log directory")
+        }
+    }
+}
 
 fun Logger.error(log: String) {
     write(log, LogLevel.ERROR)

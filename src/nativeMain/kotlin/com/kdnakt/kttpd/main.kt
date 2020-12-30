@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
     ), shortName = "l").default("info")
     argsParser.parse(args)
 
-    val log = Logger("access_log", LogLevel.valueOf(logLevel.toUpperCase()))
+    val log = Logger("./logs/access_log", LogLevel.valueOf(logLevel.toUpperCase()))
     log.info("kttpd start: localhost:$port")
     memScoped {
         val serverAddr = alloc<sockaddr_in>()
