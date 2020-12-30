@@ -36,6 +36,14 @@ task("e2e_default_port") {
     }
 }
 
+task("e2e_log_level") {
+    doLast {
+        exec {
+            executable("./run_test_log_level.sh")
+        }
+    }
+}
+
 task("e2e_all") {
     doLast {
         exec {
@@ -46,6 +54,7 @@ task("e2e_all") {
 
 task("e2etest") {
     dependsOn("e2e_default_port",
+            "e2e_log_level",
             "e2e_all")
 }
 
