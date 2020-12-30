@@ -1,11 +1,8 @@
 package com.kdnakt.kttpd
 
 import kotlinx.cinterop.memScoped
-import platform.posix.EOF
-import platform.posix.fclose
-import platform.posix.fopen
-import platform.posix.fputs
 import kotlinx.datetime.*
+import platform.posix.*
 
 enum class LogLevel(val logPrefix: String) {
     ERROR("[ERROR]"),
@@ -32,8 +29,8 @@ private fun Logger.write(log: String, minLevel: LogLevel) {
     if (level < minLevel) return
     val logString = "${minLevel.logPrefix} ${now()} $log"
     println(logString)
-    val file = fopen(path, "a") ?:
-        throw IllegalArgumentException("Cannot open output file $path")
+    val file = fopen(path, "a")
+            ?: throw IllegalArgumentException("Cannot open output file $path [Errno $errno]")
     try {
         memScoped {
             if(fputs("$logString\n", file) == EOF) throw Error("File write error")
